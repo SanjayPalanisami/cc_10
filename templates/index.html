@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tic Tac Toe</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <div class="status" id="status">Next Player: X</div>
+  <div class="board" id="board"></div>
+  <button class="reset-btn" onclick="resetGame()">Reset Game</button>
+
+  <script>
+    const board = document.getElementById('board');
+    const statusDiv = document.getElementById('status');
+    let cells = [];
+    let currentPlayer = 'X';
+    let gameActive = true;
+
+    function createBoard() {
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.addEventListener('click', () => handleCellClick(i));
+        board.appendChild(cell);
+        cells.push(cell);
+      }
+    }
+
+    function handleCellClick(i) {
+      if (!gameActive || cells[i].textContent !== '') return;
+      cells[i].textContent = currentPlayer;
+      if (checkWinner()) {
+        statusDiv.textContent = `Winner: ${currentPlayer}`;
+        gameActive = false;
+        return;
+      }
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      statusDiv.textContent = `Next Player: ${currentPlayer}`;
+    }
+
+    function checkWinner() {
+      const combos = [
+        [0,1,2], [3,4,5], [6,7,8],
+        [0,3,6], [1,4,7], [2,5,8],
+        [0,4,8], [2,4,6]
+      ];
+      return combos.some(combo => {
+        const [a,b,c] = combo;
+        return cells[a].textContent &&
+               cells[a].textContent === cells[b].textContent &&
+               cells[a].textContent === cells[c].textContent;
+      });
+    }
+
+    function resetGame() {
+      cells.forEach(cell => cell.textContent = '');
+      currentPlayer = 'X';
+      gameActive = true;
+      statusDiv.textContent = 'Next Player: X';
+    }
+
+    createBoard();
+  </script>
+
+</body>
+</html>
